@@ -2,494 +2,159 @@
 
 {% block title %}Pet Supplies Inventory{% endblock %}
 
-{% block extra_css %}
-<style>
-    .warning {
-        background-color: #fff3cd;
-        border: 1px solid #ffeeba;
-        color: #856404;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .warning h1 {
-        margin: 0;
-        font-size: 1.2em;
-    }
-
-    .warning p {
-        margin: 0 10px;
-    }
-
-    .warning .filter-button {
-        background-color: #ffc107;
-        color: #856404;
-        padding: 5px 10px;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .status-message {
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .success {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-    }
-
-    .conmain {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .warning, .status-message, .filter, .table-container, .bottom_nav {
-        width: 100%;
-        max-width: 1000px;
-        margin: 10px auto;
-    }
-
-    .filter {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        flex-wrap: wrap;
-    }
-
-    .filter input, .filter select {
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        flex: 1;
-        max-width: 200px;
-    }
-
-    .filter button {
-        padding: 8px 15px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        white-space: nowrap;
-        min-width: 100px;
-    }
-
-    .filter button:hover {
-        background-color: #45a049;
-    }
-
-    .table-container {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        width: 100%;
-    }
-
-    .action-bar {
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .add-button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .add-button:hover {
-        background-color: #45a049;
-    }
-
-    .data_tab {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .data_tab th {
-        padding: 15px;
-        border: 1px solid #ddd;
-        text-align: left;
-        font-weight: 600;
-        color: #333;
-        background-color: #f8f9fa;
-    }
-
-    .data_tab td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-
-    .data_tab tbody {
-        display: block;
-        max-height: 500px;
-        overflow-y: auto;
-    }
-
-    .data_tab thead, .data_tab tbody tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 10px;
-    }
-
-    .edit-button, .delete-button {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .edit-button {
-        background-color: #2196F3;
-        color: white;
-    }
-
-    .edit-button:hover {
-        background-color: #0b7dda;
-    }
-
-    .delete-button {
-        background-color: #f44336;
-        color: white;
-    }
-
-    .delete-button:hover {
-        background-color: #da190b;
-    }
-
-    .low-stock {
-        background-color: #fff3cd;
-    }
-
-    .low-stock-warning {
-        color: #dc3545;
-        font-weight: bold;
-        margin-left: 5px;
-    }
-
-    .bottom_nav {
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        width: 100%;
-    }
-
-    .bottom_nav table {
-        width: 100%;
-    }
-
-    .bottom_nav td {
-        padding: 5px;
-        text-align: right;
-    }
-
-    .bottom_nav .blank {
-        width: 100%;
-    }
-
-    .bottom_nav button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-left: 10px;
-        transition: background-color 0.3s;
-        min-width: 120px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .bottom_nav button i {
-        font-size: 0.9em;
-    }
-
-    @media (max-width: 1200px) {
-        .conmain {
-            padding: 0 15px;
-        }
-
-        .warning, .status-message, .filter, .table-container, .bottom_nav {
-            max-width: 100%;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .conmain {
-            padding: 0 10px;
-        }
-
-        .warning {
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .warning .filter-button {
-            width: 100%;
-            text-align: center;
-        }
-
-        .filter {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .filter input {
-            max-width: none;
-        }
-
-        .filter button {
-            width: 100%;
-        }
-
-        .bottom_nav button {
-            width: 100%;
-            margin: 5px 0;
-        }
-
-        .data_tab th, .data_tab td {
-            padding: 8px;
-            font-size: 14px;
-        }
-    }
-
-    .category-tag {
-        display: flex;
-        gap: 5px;
-        flex-wrap: wrap;
-    }
-
-    .category-badge {
-        background-color: #e3f2fd;
-        color: #1976d2;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        white-space: nowrap;
-    }
-
-    .tag-badge {
-        background-color: #f3e5f5;
-        color: #7b1fa2;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        margin: 2px;
-        white-space: nowrap;
-    }
-
-    .data_tab th.cat_head,
-    .data_tab th.tag_head {
-        width: 150px;
-    }
-
-    .data_tab td.cat_row,
-    .data_tab td.tag_row {
-        vertical-align: middle;
-    }
-</style>
-{% endblock %}
 
 {% block content %}
-{% if low_stock_items %}
-    <div class="warning">
-        <h1>⚠️ Low Stock Alert</h1>
-        <p>Some supplies are running low</p>
-        <a href="{% url 'index' %}?low_stock=true" class="filter-button">View Details</a>
-    </div>  
-{% else %}
-    <div class="status-message success">
-        <p>✅ All supplies are adequately stocked</p>
-    </div>
-{% endif %}
-
 <div class="conmain">
-    <form method="get" action="{% url 'index' %}">
-        <div class="filter">
-            <input type="text" name="name" placeholder="Search by name..." value="{{ name_query }}">
-            <input type="text" name="location" placeholder="Search by location..." value="{{ location_query }}">
-            <select name="category">
-                <option value="">All Categories</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category_query == category.id|stringformat:"i" %}selected{% endif %}>
-                        {{ category.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <select name="tag">
-                <option value="">All Tags</option>
-                {% for tag in tags %}
-                    <option value="{{ tag.id }}" {% if tag_query == tag.id|stringformat:"i" %}selected{% endif %}>
-                        {{ tag.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit">Search</button>
-            <a href="{% url 'index' %}"><button type="button">Reset</button></a>
-        </div>
-    </form>
-
-    <div class="table-container">
-        {% if user.is_authenticated %}
-            <div class="action-bar">
-                <a href="{% url 'add_supply' %}">
-                    <button type="button" class="add-button">Add New Supply</button>
-                </a>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="status-message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
             </div>
-        {% else %}
-            <div class="login-notice">
-                <strong>Please log in to add, edit, or delete supplies.</strong>
+        {% endfor %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        {% if warning_items %}
+            <div class="warning">
+                <h1>Low Stock Warning!</h1>
+                <p>Some items are running low on stock.</p>
+                <a href="{% url 'low_stock_supplies' %}" class="filter-button">View Low Stock Items</a>
             </div>
         {% endif %}
-        
-        <table border="1" class="data_tab">
-            <thead>
-                <tr>
-                    <th class="name_head">Name</th>
-                    <th class="Price_head">Price</th>
-                    <th class="Quan_head">Quantity</th>
-                    <th class="loc_head">Location</th>
-                    <th class="cat_head">Category</th>
-                    <th class="tag_head">Tags</th>
-                    <th class="action_head">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for supply in supplies %}
-                <tr {% if supply.quantity <= supply.reorder_point %}class="low-stock"{% endif %}>
-                    <td class="name_row">{{ supply.name }}</td>
-                    <td class="Price_row">${{ supply.price|floatformat:2 }}</td>
-                    <td class="Quan_row">
-                        {{ supply.quantity }}
-                        {% if supply.quantity <= supply.reorder_point %}
-                            <span class="low-stock-warning">(Low Stock!)</span>
-                        {% endif %}
-                    </td>
-                    <td class="loc_row">{{ supply.location }}</td>
-                    <td class="cat_row">
-                        {% if supply.category %}
-                            <span class="category-badge">{{ supply.category.name }}</span>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="tag_row">
-                        <div class="category-tag">
-                            {% for tag in supply.tags.all %}
-                                <span class="tag-badge">{{ tag.name }}</span>
-                            {% empty %}
-                                -
-                            {% endfor %}
-                        </div>
-                    </td>
-                    <td class="action_row">
-                        {% if user.is_authenticated %}
-                            <div class="action-buttons">
-                                <a href="{% url 'edit_supply' supply.name %}">
-                                    <button type="button" class="edit-button">Edit</button>
-                                </a>
-                                <form method="post" action="{% url 'delete_supply' supply.name %}" class="delete-form">
-                                    {% csrf_token %}
-                                    <button type="submit" class="delete-button">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="no-data">No supplies available.</td>
-                </tr>
+
+        <div class="filter">
+            <input type="text" id="nameFilter" placeholder="Filter by name...">
+            <input type="text" id="locationFilter" placeholder="Filter by location...">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </select>
+            <button onclick="applyFilters()">Apply Filters</button>
+            <button onclick="clearFilters()">Clear Filters</button>
+        </div>
 
-    <div class="bottom_nav">
-        <table>
-            <tr>
-                <td class="blank"></td>
-                {% if user.is_authenticated %}
-                <td>
-                    <a href="{% url 'audit_log' %}">
-                        <button type="button">
-                            <i class="fas fa-history"></i> Audit Log
-                        </button>
-                    </a>
-                </td>
-                <td>
-                    <a href="{% url 'export_supplies' %}">
-                        <button type="button">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </a>
-                </td>
-                <td>
-                    <a href="{% url 'import_supplies' %}">
-                        <button type="button">
-                            <i class="fas fa-upload"></i> Import
-                        </button>
-                    </a>
-                </td>
-                {% endif %}
-            </tr>
-        </table>
-    </div>
+        <div class="table-container">
+            <div class="action-bar">
+                <a href="{% url 'add_supply' %}" class="add-button">
+                    <i class="fas fa-plus"></i>
+                    Add New Item
+                </a>
+            </div>
+
+            <table class="data_tab">
+                <thead>
+                    <tr>
+                        <th class="name_head">Name</th>
+                        <th class="Price_head">Price</th>
+                        <th class="Quan_head">Quantity</th>
+                        <th class="loc_head">Location</th>
+                        <th class="cat_head">Category</th>
+                        <th class="tag_head">Tags</th>
+                        <th class="action_head">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in supplies %}
+                        <tr {% if item.quantity <= item.low_stock_threshold %}class="low-stock"{% endif %}>
+                            <td class="name_row">
+                                {{ item.name }}
+                                {% if item.quantity <= item.low_stock_threshold %}
+                                    <span class="low-stock-warning">(!)</span>
+                                {% endif %}
+                            </td>
+                            <td class="Price_row">${{ item.price }}</td>
+                            <td class="Quan_row">{{ item.quantity }}</td>
+                            <td class="loc_row">{{ item.location|default:"-" }}</td>
+                            <td class="cat_row">
+                                {% if item.category %}
+                                    <span class="category-badge">{{ item.category.name }}</span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="tag_row">
+                                <div class="category-tag">
+                                    {% if item.tags.all %}
+                                        {% for tag in item.tags.all %}
+                                            <span class="tag-badge">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="action_row">
+                                <div class="action-buttons">
+                                    <a href="{% url 'edit_supply' item.name %}" class="edit-button">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </a>
+                                    <a href="{% url 'delete_supply' item.name %}" class="delete-button">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="no-data">No items found</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bottom_nav">
+            <table>
+                <tr>
+                    <td class="blank"></td>
+                    <td class="export">
+                        <a href="{% url 'export_supplies' %}" class="export-button">Export</a>
+                    </td>
+                    <td class="import">
+                        <a href="{% url 'import_supplies' %}" class="import-button">Import</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% else %}
+        <div class="login-notice">
+            Please log in to view and manage inventory items.
+        </div>
+    {% endif %}
 </div>
-{% endblock %}
 
-{% block extra_js %}
-{% if user.is_authenticated %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const deleteForms = document.querySelectorAll('.delete-form');
-        
-        deleteForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                if (!confirm('Are you sure you want to delete this item?')) {
-                    e.preventDefault();
-                }
-            });
-        });
+function applyFilters() {
+    const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+    const locationFilter = document.getElementById('locationFilter').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+    const rows = document.querySelectorAll('.data_tab tbody tr');
+
+    rows.forEach(row => {
+        const name = row.querySelector('.name_row').textContent.toLowerCase();
+        const location = row.querySelector('.loc_row').textContent.toLowerCase();
+        const categoryElement = row.querySelector('.cat_row .category-badge');
+        const category = categoryElement ? categoryElement.textContent.toLowerCase() : '';
+
+        const nameMatch = name.includes(nameFilter);
+        const locationMatch = location.includes(locationFilter);
+        const categoryMatch = !categoryFilter || category === categoryFilter;
+
+        row.style.display = (nameMatch && locationMatch && categoryMatch) ? '' : 'none';
     });
+}
+
+function clearFilters() {
+    document.getElementById('nameFilter').value = '';
+    document.getElementById('locationFilter').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.querySelectorAll('.data_tab tbody tr').forEach(row => {
+        row.style.display = '';
+    });
+}
 </script>
-{% endif %}
 {% endblock %}

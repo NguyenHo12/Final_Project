@@ -1001,4 +1001,113 @@ button:hover {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ============================================================================
+   Category and Tag Styles
+============================================================================ */
+.category-badge {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 2px;
+    font-weight: 500;
+}
+
+.tag-badge {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    margin: 2px;
+    white-space: nowrap;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.category-tag {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 32px;
+}
+
+.no-data {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    display: block;
+}
+
+/* Table Column Alignments */
+.data_tab td.Price_row { text-align: right; }
+.data_tab td.Quan_row,
+.data_tab td.loc_row { text-align: center; }
+.data_tab td.cat_row,
+.data_tab td.tag_row { padding: 8px 12px; }
+
+/* Table Column Widths */
+.data_tab th.name_head { width: 20%; }
+.data_tab th.Price_head { width: 10%; }
+.data_tab th.Quan_head { width: 10%; }
+.data_tab th.loc_head { width: 10%; }
+.data_tab th.cat_head { width: 15%; }
+.data_tab th.tag_head { width: 20%; }
+.data_tab th.action_head { width: 15%; }
+
+/* Table Header Styles */
+.data_tab thead {
+    background: linear-gradient(to bottom, #2E7D32, #1B5E20);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.data_tab thead th {
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    text-align: center;
+    border-bottom: 2px solid #1B5E20;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    height: 50px;
+    line-height: 1.2;
+    vertical-align: middle;
+    display: table-cell;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+/* Table Cell Styles */
+.data_tab td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Table Row Styles */
+.data_tab tr:nth-child(even) { background-color: #f8f9fa; }
+.data_tab tr:nth-child(odd) { background-color: white; }
+.data_tab tr:hover { background-color: #f1f1f1; }
+
+/* Low Stock Styles */
+.low-stock {
+    background-color: #fff3cd;
+}
+
+.low-stock-warning {
+    color: #dc3545;
+    font-weight: bold;
+    margin-left: 5px;
 }    
