@@ -1,0 +1,1004 @@
+/* ============================================================================
+   Base Styles & Typography
+============================================================================ */
+@font-face {
+    font-family: 'Bauhaus 93';
+    src: url('fonts/Bauhaus 93 Regular.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+    margin-top: 100px;
+    background-color: #f9f9f9;
+}
+
+/* ============================================================================
+   Header Styles
+============================================================================ */
+.header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(135deg, #1e4d2b, #2E7D32);
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+.header-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link i {
+    font-size: 0.9em;
+}
+
+.nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.welcome-text {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.header-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+}
+
+.header-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
+
+/* Content Container */
+.content-container {
+    margin-top: 80px;
+    padding: 20px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Table Styles */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.data_tab {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data_tab th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.data_tab td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.data_tab tr:last-child td {
+    border-bottom: none;
+}
+
+.data_tab tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Buttons */
+.add-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
+
+.edit-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #2196F3;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85em;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+    background-color: #1976D2;
+}
+
+.delete-button {
+    background-color: #f44336;
+    margin-left: 8px;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Category and Tag specific styles */
+.category-header, .tag-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.category-header h1, .tag-header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 1.8em;
+}
+
+/* Form Styles */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Export/Import buttons at table bottom */
+.table-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85em;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.export-button {
+    background-color: #28a745;
+}
+
+.export-button:hover {
+    background-color: #218838;
+}
+
+.import-button {
+    background-color: #17a2b8;
+}
+
+.import-button:hover {
+    background-color: #138496;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+
+    .nav-link {
+        font-size: 0.9em;
+        padding: 6px 10px;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .content-container {
+        margin-top: 140px;
+        padding: 10px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .data_tab {
+        font-size: 0.9em;
+    }
+}
+
+/* ============================================================================
+   Navigation Styles
+============================================================================ */
+.nav_tab {
+    width: 100%;
+    height: 50px;
+}
+
+.nav_tab th, 
+.nav_tab td {
+    vertical-align: bottom;
+}
+
+.pet {
+    font-family: 'Bauhaus 93', Arial, sans-serif;
+    font-size: 2em;
+    width: 20%;
+}
+
+.warn2 { width: 70%; }
+
+/* ============================================================================
+   Table Styles
+============================================================================ */
+.table-container {
+    max-height: 600px;
+    width: 90%;
+    margin: 20px auto;
+    border: none;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.table-header {
+    background-color: #4CAF50;
+    position: sticky;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+.table-body {
+    width: 100%;
+    max-height: 550px;
+    overflow-y: auto;
+}
+
+.data_tab {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 16px;
+}
+
+.data_tab th,
+.data_tab td {
+    text-align: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 40px;
+    line-height: 1.2;
+}
+
+.data_tab th {
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 12px;
+    height: 40px;
+}
+
+/* Table Column Widths */
+.name_head, .name_row { width: 30%; }
+.Price_head, .Price_row { width: 15%; }
+.Quan_head, .Quan_row { width: 15%; }
+.loc_head, .loc_row { width: 20%; }
+.edit_head, .edit_button { width: 10%; }
+.del_head, .Del_button { width: 10%; }
+
+/* Table Row Styles */
+.data_tab tr {
+    height: 40px;
+}
+
+/* ============================================================================
+   Table Header Styles
+============================================================================ */
+.data_tab thead {
+    background: linear-gradient(to bottom, #2E7D32, #1B5E20);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.data_tab thead tr {
+    height: 50px;
+}
+
+.data_tab thead th {
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    text-align: center;
+    border-bottom: 2px solid #1B5E20;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    height: 50px;
+    line-height: 1.2;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+/* Column-specific header styles */
+.data_tab thead .name_head {
+    text-align: center;
+    width: 30%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .Price_head {
+    text-align: center;
+    width: 15%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .Quan_head {
+    text-align: center;
+    width: 15%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .loc_head {
+    text-align: center;
+    width: 20%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .action_head {
+    text-align: center;
+    width: 20%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .edit_head,
+.data_tab thead .del_head {
+    text-align: center;
+    width: 10%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+    min-width: 120px;
+}
+
+.data_tab thead .del_head button {
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* Hover effect for header */
+.data_tab thead th:hover {
+    background: linear-gradient(to bottom, #1B5E20, #2E7D32);
+    transition: all 0.3s ease;
+}
+
+/* Login message style */
+.login-message {
+    color: #FFA000;
+    font-size: 14px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ============================================================================
+   Filter & Warning Styles
+============================================================================ */
+.filter {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.filter input {
+    padding: 10px;
+    margin: 0 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.warning {
+    width: 90%;
+    margin: 10px auto;
+    padding: 8px;
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.warning h1 {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    color: #d32f2f;
+}
+
+.warning .filter-button {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 8px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.warning .filter-button:hover {
+    background-color: #d32f2f;
+}
+
+/* ============================================================================
+   Button Styles
+============================================================================ */
+button {
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* ============================================================================
+   Bottom Navigation
+============================================================================ */
+.bottom_nav {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.blank { width: 60%; }
+.export, .import { width: 10%; }
+
+/* ============================================================================
+   Login Notice Styles
+============================================================================ */
+.login-notice {
+    background-color: #FFF3E0;
+    color: #E65100;
+    padding: 10px 15px;
+    text-align: center;
+    border: 1px solid #FFB74D;
+    border-radius: 4px;
+    margin: 10px auto;
+    width: 90%;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ============================================================================
+   Action Bar Styles
+============================================================================ */
+.action-bar {
+    text-align: right;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+.add-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
+
+/* ============================================================================
+   Action Column Styles
+============================================================================ */
+.action_head, .action_row {
+    width: 20%;
+    text-align: center;
+    min-width: 150px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 2px;
+}
+
+.edit-button, .delete-button {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* Ensure action buttons are properly aligned in the table */
+.data_tab .action_row {
+    vertical-align: middle;
+}
+
+/* Add responsive styles for action buttons */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .edit-button, .delete-button {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   Table Column Widths
+============================================================================ */
+.name_head, .name_row { width: 30%; }
+.Price_head, .Price_row { width: 15%; }
+.Quan_head, .Quan_row { width: 15%; }
+.loc_head, .loc_row { width: 20%; }
+.edit_head, .edit_button { width: 10%; }
+.del_head, .Del_button { width: 10%; }
+
+/* ============================================================================
+   Table Row Styles
+============================================================================ */
+.data_tab tr:nth-child(even) { background-color: #f8f9fa; }
+.data_tab tr:nth-child(odd) { background-color: white; }
+.data_tab tr:hover { background-color: #f1f1f1; }
+
+/* ============================================================================
+   Table Header Styles
+============================================================================ */
+.data_tab thead {
+    background: linear-gradient(to bottom, #2E7D32, #1B5E20);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.data_tab thead tr {
+    height: 50px;
+}
+
+.data_tab thead th {
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    text-align: center;
+    border-bottom: 2px solid #1B5E20;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    height: 50px;
+    line-height: 1.2;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+/* Column-specific header styles */
+.data_tab thead .name_head {
+    text-align: center;
+    width: 30%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .Price_head {
+    text-align: center;
+    width: 15%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .Quan_head {
+    text-align: center;
+    width: 15%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .loc_head {
+    text-align: center;
+    width: 20%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+}
+
+.data_tab thead .edit_head,
+.data_tab thead .del_head {
+    text-align: center;
+    width: 10%;
+    background: linear-gradient(to right, #2E7D32, #1B5E20);
+    min-width: 120px;
+}
+
+.data_tab thead .del_head button {
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* Hover effect for header */
+.data_tab thead th:hover {
+    background: linear-gradient(to bottom, #1B5E20, #2E7D32);
+    transition: all 0.3s ease;
+}
+
+/* Login message style */
+.login-message {
+    color: #FFA000;
+    font-size: 14px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ============================================================================
+   Filter & Warning Styles
+============================================================================ */
+.filter {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.filter input {
+    padding: 10px;
+    margin: 0 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.warning {
+    width: 90%;
+    margin: 10px auto;
+    padding: 8px;
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.warning h1 {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    color: #d32f2f;
+}
+
+.warning .filter-button {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 8px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.warning .filter-button:hover {
+    background-color: #d32f2f;
+}
+
+/* ============================================================================
+   Button Styles
+============================================================================ */
+button {
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* ============================================================================
+   Bottom Navigation
+============================================================================ */
+.bottom_nav {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.blank { width: 60%; }
+.export, .import { width: 10%; }
+
+/* ============================================================================
+   Login Notice Styles
+============================================================================ */
+.login-notice {
+    background-color: #FFF3E0;
+    color: #E65100;
+    padding: 10px 15px;
+    text-align: center;
+    border: 1px solid #FFB74D;
+    border-radius: 4px;
+    margin: 10px auto;
+    width: 90%;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ============================================================================
+   Status Messages & Login Styles
+============================================================================ */
+.status-message {
+    margin: 100px auto 20px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    font-size: 16px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.status-message.success {
+    background: #e8f5e9;
+    border-color: #c8e6c9;
+    color: #2e7d32;
+}
+
+.warning {
+    margin: 100px auto 20px;
+    padding: 20px;
+    background-color: #fff3e0;
+    border: 2px solid #ffb74d;
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.warning h1 {
+    color: #f57c00;
+    font-size: 24px;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.warning .filter-button {
+    display: inline-block;
+    margin-left: 15px;
+    padding: 8px 20px;
+    background-color: #ff9800;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.warning .filter-button:hover {
+    background-color: #f57c00;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-right button {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.header-right button:hover {
+    background-color: white;
+    color: #2E7D32;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.header-right span {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.login-notice {
+    margin: 20px auto;
+    padding: 15px 25px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    border-radius: 4px;
+    color: #1b5e20;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}    

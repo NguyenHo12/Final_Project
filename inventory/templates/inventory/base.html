@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pet Supplies Inventory{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+    <style>
+        .low-stock {
+            background-color: #fff3cd;
+        }
+        
+        .low-stock-warning {
+            color: #dc3545;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-content">
+            <div class="header-left">
+                <img src="{% static 'icons/TLeafLogo2sm.png' %}" alt="T Leaf Logo" class="logo">
+                <div class="header-title">Pet Supplies</div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{% url 'category_list' %}" class="nav-link {% if 'categories' in request.path %}active{% endif %}">
+                    <i class="fas fa-folder"></i> Categories
+                </a>
+                <a href="{% url 'tag_list' %}" class="nav-link {% if 'tags' in request.path %}active{% endif %}">
+                    <i class="fas fa-tags"></i> Tags
+                </a>
+                <a href="{% url 'low_stock_supplies' %}" class="nav-link {% if 'low-stock' in request.path %}active{% endif %}">
+                    <i class="fas fa-exclamation-triangle"></i> Low Stock
+                </a>
+            </div>
+            <div class="header-right">
+                {% if user.is_authenticated %}
+                    <span class="welcome-text">Welcome, {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="header-button">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="header-button">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="content-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

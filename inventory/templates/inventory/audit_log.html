@@ -1,0 +1,102 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Audit Log - Pet Supplies Inventory{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @font-face {
+            font-family: 'Bauhaus 93';
+        src: url('fonts/Bauhaus 93 Regular.ttf') format('truetype');
+        }
+
+    .conmain {
+        margin: 50px auto;
+        max-width: 1000px;
+        background-color: #4CAF50;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    .table-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        }
+
+    .changes {
+            width: 286px;
+        word-break: break-word;
+        }
+
+    h2 {
+            font-family: 'Bauhaus 93', Arial, sans-serif;
+            font-size: 2em;
+        color: #F6DE60;
+        text-align: center;
+        margin-bottom: 20px;
+        }
+
+    .back-button {
+        background-color: #F6DE60;
+        color: #333;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+        background-color: #e6ce50;
+    }
+
+    th {
+        background-color: #F6DE60;
+        padding: 12px;
+        text-align: left;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="conmain">
+    <h2>Audit Log</h2>
+    <div class="table-container">
+    <table border="1" class="data_tab">
+        <tr>
+            <th>Action</th>
+            <th>User</th>
+            <th>Supply</th>
+            <th>Changes</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.get_action_display }}</td>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.supply.name }}</td>
+                <td class="changes">{{ log.changes }}</td>
+            <td>{{ log.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+    <center>
+        <a href="{% url 'index' %}">
+            <button type="button" class="back-button">Back</button>
+    </a>
+</center>
+</div>
+{% endblock %}

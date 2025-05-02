@@ -1,0 +1,33 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Pet Supplies Inventory{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="login-form">
+        <h1>{{ title }}</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="color: #F6DE60;">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color: #dc3545;">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <center>
+                <button type="submit" class="save-button">Save</button>
+                <a href="{% url 'tag_list' %}" class="back-button">Back</a>
+            </center>
+        </form>
+    </div>
+</div>
+{% endblock %} 

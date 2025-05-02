@@ -1,0 +1,38 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block title %}Tags - Pet Supplies Inventory{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Tags</h1>
+    <a href="{% url 'tag_create' %}" class="add-button">
+        <i class="fas fa-plus"></i> Add Tag
+    </a>
+    
+    <div class="table-container">
+        <table class="data_tab">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td>{{ tag.name }}</td>
+                    <td>
+                        <a href="{% url 'tag_update' tag.pk %}" class="edit-button">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">No tags found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 
