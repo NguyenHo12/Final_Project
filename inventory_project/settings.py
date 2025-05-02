@@ -26,7 +26,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-hhtp8v@5o8w6*h)ezq&&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] + os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'inventory-manage-6jyq.onrender.com',
+    '.onrender.com'  # Cho phép tất cả các subdomain của render.com
+]
 
 
 # Application definition
