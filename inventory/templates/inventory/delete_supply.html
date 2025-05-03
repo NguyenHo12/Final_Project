@@ -1,0 +1,34 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block title %}Delete Supply - Pet Supplies Inventory{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="h4 mb-0">Delete Supply</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Are you sure you want to delete this supply?</p>
+                    <p><strong>Name:</strong> {{ supply.name }}</p>
+                    <p><strong>Category:</strong> {{ supply.category.name }}</p>
+                    <p><strong>Price:</strong> ${{ supply.price }}</p>
+                    <p><strong>Quantity:</strong> {{ supply.quantity }}</p>
+                    <p><strong>Location:</strong> {{ supply.location }}</p>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'index' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

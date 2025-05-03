@@ -196,21 +196,20 @@ def add_supply(request):
 @login_required
 def delete_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
-
+    
     if request.method == 'POST':
         # Create audit log before deleting
         AuditLog.objects.create(
             user=request.user,
             action='DELETE',
             supply=supply,
-            details=f'Deleted supply: {supply.name}, {supply.price}, {supply.quantity}, {supply.location}'
+            details=f'Deleted supply: {supply.name}'
         )
-        supply.delete()  # Actually delete the supply
+        supply.delete()
         messages.success(request, 'Supply deleted successfully!')
         return redirect('index')
     
-    messages.error(request, 'Invalid request method for deletion.')
-    return redirect('index')
+    return render(request, 'inventory/delete_supply.html', {'supply': supply})
 
 @login_required
 def edit_supply(request, supply_id):
