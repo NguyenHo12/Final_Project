@@ -22,7 +22,7 @@ def index(request):
     search_query = request.GET.get('search', '')
     
     # Start with all supplies
-    supplies = Supply.objects.all()
+    supplies = Supply.objects.all().select_related('category').prefetch_related('tags')
     
     # Apply filters if provided
     if category_id:
