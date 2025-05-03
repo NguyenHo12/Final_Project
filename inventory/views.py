@@ -41,17 +41,17 @@ def index(request):
     # Order by name
     supplies = supplies.order_by('name')
     
-    # Paginate the supplies
+    # Pagination
     paginator = Paginator(supplies, 20)  # Show 20 supplies per page
     page_number = request.GET.get('page')
-    supplies = paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_number)
     
     # Get all categories and tags for the filter dropdowns
     categories = Category.objects.all()
     tags = Tag.objects.all()
     
     context = {
-        'supplies': supplies,
+        'supplies': page_obj,
         'categories': categories,
         'tags': tags,
         'selected_category': category_id,
@@ -137,19 +137,24 @@ def add_supply(request):
     if request.method == 'POST':
         form = SupplyForm(request.POST)
         if form.is_valid():
-            supply = form.save()
-
-            # Create an audit log entry
+            supply = form.save(commit=False)
+            supply.created_by = request.user
+            supply.save()
+            form.save_m2m()  # Save many-to-many relationships (tags)
+            
+            # Create audit log
             AuditLog.objects.create(
-                user=request.user,  # User who made the change
-                action='CREATE',  # Action type
-                supply=supply,  # The supply that was created
-                details=f'Created supply: {supply.name}, {supply.price}, {supply.quantity}, {supply.location}'  # Description of the changes
+                user=request.user,
+                action='CREATE',
+                supply=supply,
+                details=f'Created new supply: {supply.name}'
             )
+            
             messages.success(request, 'Supply added successfully!')
             return redirect('index')
     else:
         form = SupplyForm()
+    
     return render(request, 'inventory/add_supply.html', {'form': form})
 
 @login_required

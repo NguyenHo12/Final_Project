@@ -4,103 +4,33 @@
 {% block title %}Add New Supply - Pet Supplies Inventory{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-body p-4">
-                    <h2 class="card-title mb-4">Add New Supply</h2>
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-
-                    <form method="post" class="needs-validation" novalidate>
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">Add New Supply</h1>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
                         {% csrf_token %}
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                                <div class="invalid-feedback">
-                                    Please provide a name for the supply.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="category" class="form-label">Category</label>
-                                <select class="form-select" id="category" name="category" required>
-                                    <option value="">Select a category</option>
-                                    {% for category in categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">
-                                    Please select a category.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
-                                <div class="invalid-feedback">
-                                    Please provide a valid quantity.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="price" class="form-label">Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Please provide a valid price.
-                                </div>
-                            </div>
-                        </div>
-
+                        {% for field in form %}
                         <div class="mb-3">
-                            <label for="low_stock_threshold" class="form-label">Low Stock Threshold</label>
-                            <input type="number" class="form-control" id="low_stock_threshold" name="low_stock_threshold" min="0" required>
-                            <div class="form-text">Set the minimum quantity before low stock warning.</div>
-                            <div class="invalid-feedback">
-                                Please provide a valid low stock threshold.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="location" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="location" name="location">
-                            <div class="form-text">Optional: Where the item is stored.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Tags</label>
-                            <div class="row">
-                                {% for tag in tags %}
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="tags" value="{{ tag.id }}" id="tag_{{ tag.id }}">
-                                        <label class="form-check-label" for="tag_{{ tag.id }}">
-                                            {{ tag.name }}
-                                        </label>
-                                    </div>
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-warning">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ field.errors }}
                                 </div>
-                                {% endfor %}
-                            </div>
+                            {% endif %}
                         </div>
-
+                        {% endfor %}
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{% url 'index' %}" class="btn btn-secondary me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Save Supply
-                            </button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>
@@ -108,24 +38,4 @@
         </div>
     </div>
 </div>
-
-{% block extra_js %}
-<script>
-// Form validation
-(function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
-</script>
-{% endblock %}
 {% endblock %}

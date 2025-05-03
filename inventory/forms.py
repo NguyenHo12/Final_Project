@@ -6,29 +6,37 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ['name', 'description']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
 class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class SupplyForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    
     class Meta:
         model = Supply
-        fields = ['name', 'price', 'quantity', 'location', 'reorder_point', 'category', 'tags']
+        fields = ['name', 'price', 'quantity', 'reorder_point', 'location', 'category', 'tags']
         widgets = {
-            'price': forms.NumberInput(attrs={'step': '0.01'}),
-            'quantity': forms.NumberInput(attrs={'min': '0'}),
-            'reorder_point': forms.NumberInput(attrs={'min': '0'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
+            'reorder_point': forms.NumberInput(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'tags': forms.SelectMultiple(attrs={'class': 'form-select'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Load all categories and tags
+        self.fields['category'].queryset = Category.objects.all()
+        self.fields['tags'].queryset = Tag.objects.all()
 
 class UploadFileForm(forms.Form):
     file = forms.FileField(label='Select a CSV file to upload')
