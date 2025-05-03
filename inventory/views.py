@@ -10,61 +10,52 @@ from django.http import HttpResponse, JsonResponse
 from .forms import UploadFileForm
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.core.paginator import Paginator
 
 
 
 
 def index(request):
-    location_query = request.GET.get('location', '')
-    name_query = request.GET.get('name', '')
-    category_query = request.GET.get('category', '')
-    tag_query = request.GET.get('tag', '')
-    low_stock = request.GET.get('low_stock', False)
-
-    supplies = Supply.objects.all().select_related('category').prefetch_related('tags')
-
-    if low_stock:
-        supplies = supplies.filter(quantity__lte=models.F('reorder_point'))
-
-    if location_query:
-        supplies = supplies.filter(location__icontains=location_query)
-    if name_query:
-        supplies = supplies.filter(name__icontains=name_query)
-    if category_query:
-        supplies = supplies.filter(category_id=category_query)
-    if tag_query:
-        supplies = supplies.filter(tags__id=tag_query)
-
-    if request.method == 'POST':
-        supply_name = request.POST.get('supply_name')
-        quantity_returned = int(request.POST.get('quantity', 0))
-        supply = get_object_or_404(Supply, name=supply_name)
-
-        if quantity_returned > 0:
-            supply.quantity += quantity_returned
-            supply.save()
-            messages.success(request, f'Supply {supply_name} returned successfully! New quantity: {supply.quantity}')
-        else:
-            messages.error(request, 'Invalid quantity returned. Please enter a positive number.')
-
-    low_stock_items = Supply.objects.filter(quantity__lte=models.F('reorder_point'))
-    low_stock_items_exist = low_stock_items.exists()
-
+    # Get filter parameters
+    category_id = request.GET.get('category')
+    tag_id = request.GET.get('tag')
+    search_query = request.GET.get('search', '')
+    
+    # Start with all supplies
+    supplies = Supply.objects.all()
+    
+    # Apply filters if provided
+    if category_id:
+        supplies = supplies.filter(category_id=category_id)
+    if tag_id:
+        supplies = supplies.filter(tags__id=tag_id)
+    if search_query:
+        supplies = supplies.filter(
+            models.Q(name__icontains=search_query) |
+            models.Q(description__icontains=search_query)
+        )
+    
+    # Order by name
+    supplies = supplies.order_by('name')
+    
+    # Paginate the supplies
+    paginator = Paginator(supplies, 20)  # Show 20 supplies per page
+    page_number = request.GET.get('page')
+    supplies = paginator.get_page(page_number)
+    
     # Get all categories and tags for the filter dropdowns
     categories = Category.objects.all()
     tags = Tag.objects.all()
-
-    context = { 
+    
+    context = {
         'supplies': supplies,
-        'low_stock_items': low_stock_items,
-        'location_query': location_query,
-        'name_query': name_query,
-        'category_query': category_query,
-        'tag_query': tag_query,
-        'low_stock_items_exist': low_stock_items_exist,
         'categories': categories,
         'tags': tags,
+        'selected_category': category_id,
+        'selected_tag': tag_id,
+        'search_query': search_query,
     }
+    
     return render(request, 'inventory/index.html', context)
 
 def low_stock_supplies(request):
@@ -92,19 +83,46 @@ def export_supplies(request):
         writer.writerow([supply.name, supply.price, supply.quantity, supply.location])
     return response
 
-def import_supplies(request):
+@login_required
+def import_supplies(request, supply_id):
+    supply = get_object_or_404(Supply, id=supply_id)
+    
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES['file']
-            reader = csv.reader(file.read().decode('utf-8').splitlines())
-            next(reader)  
-            for row in reader:
-                Supply.objects.create(name=row[0], price=row[1], quantity=row[2], location=row[3])
-            return redirect('index') 
+            try:
+                file = request.FILES['file']
+                if file.name.endswith('.csv'):
+                    # Handle CSV import
+                    reader = csv.reader(file)
+                    next(reader)  # Skip header
+                    for row in reader:
+                        if len(row) >= 2:
+                            quantity = int(row[1])
+                            supply.quantity += quantity
+                            supply.save()
+                            
+                            # Log the import
+                            AuditLog.objects.create(
+                                supply=supply,
+                                action='IMPORT',
+                                quantity=quantity,
+                                user=request.user
+                            )
+                            
+                    messages.success(request, f'Successfully imported supplies for {supply.name}')
+                    return redirect('index')
+                else:
+                    messages.error(request, 'Please upload a CSV file')
+            except Exception as e:
+                messages.error(request, f'Error importing supplies: {str(e)}')
     else:
         form = UploadFileForm()
-    return render(request, 'inventory/import_supplies.html', {'form': form})
+    
+    return render(request, 'inventory/import_supplies.html', {
+        'form': form,
+        'supply': supply
+    })
 
 def audit_log(request):
     logs = AuditLog.objects.all().order_by('-timestamp')
@@ -131,8 +149,8 @@ def add_supply(request):
     return render(request, 'inventory/add_supply.html', {'form': form})
 
 @login_required
-def delete_supply(request, supply_name):
-    supply = get_object_or_404(Supply, name=supply_name)
+def delete_supply(request, supply_id):
+    supply = get_object_or_404(Supply, id=supply_id)
 
     if request.method == 'POST':
         # Create audit log before deleting
@@ -150,12 +168,11 @@ def delete_supply(request, supply_name):
     return redirect('index')
 
 @login_required
-def edit_supply(request, supply_name):
-    supply = get_object_or_404(Supply, name=supply_name)
+def edit_supply(request, supply_id):
+    supply = get_object_or_404(Supply, id=supply_id)
     if request.method == 'POST':
         form = SupplyForm(request.POST, instance=supply)
         if form.is_valid():
-    
             old_data = f'{supply.name}, {supply.price}, {supply.quantity}, {supply.location}'
             supply = form.save()
             new_data = f'{supply.name}, {supply.price}, {supply.quantity}, {supply.location}'
@@ -171,19 +188,18 @@ def edit_supply(request, supply_name):
             return redirect('index')
     else:
         form = SupplyForm(instance=supply)
-    return render(request, 'inventory/edit_supply.html', {'form': form})
+    return render(request, 'inventory/edit_supply.html', {'form': form, 'supply': supply})
 
 @login_required
 @csrf_exempt 
-def update_supply(request, supply_name):
+def update_supply(request, supply_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         price = data.get('price')
         quantity = data.get('quantity')
         location = data.get('location')
 
-        
-        supply = get_object_or_404(Supply, name=supply_name)
+        supply = get_object_or_404(Supply, id=supply_id)
 
         changes = []
         if price is not None and price != str(supply.price):
@@ -196,10 +212,8 @@ def update_supply(request, supply_name):
             changes.append(f"Location changed from '{supply.location}' to '{location}'")
             supply.location = location
 
-        
         supply.save()
 
-     
         if changes:
             AuditLog.objects.create(
                 action='Update',

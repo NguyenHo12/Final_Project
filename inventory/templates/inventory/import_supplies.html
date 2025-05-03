@@ -3,108 +3,76 @@
 
 {% block title %}Import Supplies - Pet Supplies Inventory{% endblock %}
 
-{% block extra_css %}
-<style>
-        .form-container {
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-        min-height: calc(100vh - 200px);
-        padding: 20px;
-        }
-  
-        .login-form {
-            background-color: #4CAF50; 
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
-            width: 100%; 
-        }
-
-    .login-image {
-        width: 100%;
-        max-width: 385px;
-        height: auto;
-        margin-bottom: 25px;
-        border-radius: 10px;
-    }
-
-    .form-group {
-            margin-bottom: 20px;
-        }
-
-    .form-group label {
-        display: block;
-        color: #F6DE60;
-        margin-bottom: 8px;
-        font-weight: 500;
-    }
-
-    .form-group input[type="file"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-        background-color: white;
-    }
-
-    .message {
-        color: #F6DE60;
-        margin: 20px 0;
-        text-align: center;
-        font-size: 18px;
-    }
-
-    button {
-        background-color: #F6DE60;
-        color: #333;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin: 10px;
-        font-weight: 600;
-        transition: background-color 0.3s;
-    }
-
-    button:hover {
-        background-color: #e6ce50;
-    }
-
-    .back-button {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    .back-button:hover {
-        background-color: #5a6268;
-    }
-    </style>
-{% endblock %}
-
 {% block content %}
-<div class="form-container">
-    <div class="login-form">
-        <center>
-            <img src="{% static 'icons/BannerYI.jpg' %}" alt="T Leaf Logo" class="login-image">
-    </center>
-        <p class="message">Select a CSV file to upload:</p>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-            <div class="form-group">
-                <label for="file">Choose File</label>
-                    {{ form.file }} 
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h2 class="card-title mb-4">Import Supplies for {{ supply.name }}</h2>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Current Stock Information</h5>
+                        <p>Current Quantity: {{ supply.quantity }}</p>
+                        <p>Low Stock Threshold: {{ supply.low_stock_threshold }}</p>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="file" class="form-label">CSV File</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                            <div class="form-text">
+                                Upload a CSV file with the following format:<br>
+                                - First column: Supply ID (optional)<br>
+                                - Second column: Quantity to import
+                            </div>
+                            <div class="invalid-feedback">
+                                Please select a CSV file.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'index' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-file-import me-2"></i>Import Supplies
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            <center>
-                <button type="submit">Upload</button>
-            <a href="{% url 'index' %}">
-                    <button type="button" class="back-button">Back</button>
-                </a>
-            </center>
-        </form>
+            </div>
+        </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
+{% endblock %}
 {% endblock %}
 
