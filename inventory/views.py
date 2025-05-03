@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Supply, AuditLog, Category, Tag  # Make sure to import AuditLog, Category, and Tag
+from .models import Supply, AuditLog, Category, Tag, User  # Make sure to import AuditLog, Category, and Tag
 from .forms import SupplyForm, CategoryForm, TagForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -128,9 +128,45 @@ def import_supplies(request, supply_id):
         'supply': supply
     })
 
+@login_required
 def audit_log(request):
-    logs = AuditLog.objects.all().order_by('-timestamp')
-    return render(request, 'inventory/audit_log.html', {'logs': logs})
+    # Get filter parameters
+    action = request.GET.get('action')
+    user_id = request.GET.get('user')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    
+    # Start with all logs
+    logs = AuditLog.objects.all().select_related('user', 'supply').order_by('-timestamp')
+    
+    # Apply filters if provided
+    if action:
+        logs = logs.filter(action=action)
+    if user_id:
+        logs = logs.filter(user_id=user_id)
+    if date_from:
+        logs = logs.filter(timestamp__date__gte=date_from)
+    if date_to:
+        logs = logs.filter(timestamp__date__lte=date_to)
+    
+    # Pagination
+    paginator = Paginator(logs, 20)  # Show 20 logs per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Get all users for the filter dropdown
+    users = User.objects.all()
+    
+    context = {
+        'logs': page_obj,
+        'users': users,
+        'selected_action': action,
+        'selected_user': user_id,
+        'date_from': date_from,
+        'date_to': date_to,
+    }
+    
+    return render(request, 'inventory/audit_log.html', context)
 
 @login_required
 def add_supply(request):

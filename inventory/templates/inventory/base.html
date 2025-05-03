@@ -172,6 +172,13 @@
                                 <i class="fas fa-exclamation-triangle"></i> Low Stock
                             </a>
                         </li>
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'audit_log' %}">
+                                <i class="fas fa-history"></i> Audit Log
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <div class="navbar-nav">
                         {% if user.is_authenticated %}
