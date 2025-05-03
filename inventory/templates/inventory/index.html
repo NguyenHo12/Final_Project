@@ -4,28 +4,32 @@
 {% block title %}Pet Supplies Inventory{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h1 class="display-4">Pet Supplies Inventory</h1>
-        </div>
-        <div class="col-md-6 text-md-end">
-            <a href="{% url 'add_supply' %}" class="btn btn-success">
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Pet Supplies Inventory</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'add_supply' %}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Supply
+            </a>
+            <a href="{% url 'import_supplies' 0 %}" class="btn btn-success">
+                <i class="fas fa-file-import"></i> Import
+            </a>
+            <a href="{% url 'export_supplies' %}" class="btn btn-success">
+                <i class="fas fa-file-export"></i> Export
             </a>
         </div>
     </div>
 
-    <!-- Filter Section -->
-    <div class="card mb-4">
+    <!-- Filters -->
+    <div class="card shadow mb-4">
         <div class="card-body">
-            <form method="get" class="row g-3">
+            <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label for="category" class="form-label">Category</label>
                     <select name="category" id="category" class="form-select">
                         <option value="">All Categories</option>
                         {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"i" %}selected{% endif %}>
                             {{ category.name }}
                         </option>
                         {% endfor %}
@@ -36,105 +40,77 @@
                     <select name="tag" id="tag" class="form-select">
                         <option value="">All Tags</option>
                         {% for tag in tags %}
-                        <option value="{{ tag.id }}" {% if selected_tag == tag.id %}selected{% endif %}>
+                        <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"i" %}selected{% endif %}>
                             {{ tag.name }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" name="location" id="location" class="form-control" 
+                           placeholder="Search by location" value="{{ location_query }}">
+                </div>
+                <div class="col-md-3">
                     <label for="search" class="form-label">Search</label>
                     <input type="text" name="search" id="search" class="form-control" 
-                           value="{{ search_query }}" placeholder="Search supplies...">
+                           placeholder="Search by name" value="{{ search_query }}">
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-success me-2">Apply Filters</button>
-                    <a href="{% url 'index' %}" class="btn btn-secondary">Clear</a>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{% url 'index' %}" class="btn btn-secondary">Clear Filters</a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Supplies Table -->
-    <div class="card">
+    <div class="card shadow">
         <div class="card-body">
-            <div class="table-responsive" style="max-height: 600px;">
-                <table class="table table-striped table-hover">
-                    <thead class="table-light sticky-top">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
                         <tr>
                             <th>Name</th>
                             <th>Category</th>
                             <th>Tags</th>
-                            <th>Quantity</th>
                             <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Location</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for supply in supplies %}
-                        <tr class="{% if supply.quantity < supply.low_stock_threshold %}table-warning{% endif %}">
-                            <td>
-                                <a href="{% url 'edit_supply' supply.id %}" class="text-decoration-none">
-                                    {{ supply.name }}
-                                </a>
-                                {% if supply.quantity < supply.low_stock_threshold %}
-                                <span class="badge bg-danger">Low Stock</span>
-                                {% endif %}
-                            </td>
+                        <tr>
+                            <td>{{ supply.name }}</td>
                             <td>{{ supply.category.name }}</td>
                             <td>
                                 {% for tag in supply.tags.all %}
-                                <span class="badge bg-info">{{ tag.name }}</span>
+                                <span class="badge bg-secondary">{{ tag.name }}</span>
                                 {% endfor %}
                             </td>
-                            <td>{{ supply.quantity }}</td>
                             <td>${{ supply.price }}</td>
                             <td>
+                                <span class="{% if supply.quantity <= supply.reorder_point %}text-danger{% endif %}">
+                                    {{ supply.quantity }}
+                                </span>
+                            </td>
+                            <td>{{ supply.location }}</td>
+                            <td>
                                 <div class="btn-group" role="group">
-                                    <a href="{% url 'edit_supply' supply.id %}" class="btn btn-sm btn-success">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="{% url 'edit_supply' supply.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-danger" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#deleteModal{{ supply.id }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Delete Confirmation Modal -->
-                                <div class="modal fade" id="deleteModal{{ supply.id }}" tabindex="-1" 
-                                     aria-labelledby="deleteModalLabel{{ supply.id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ supply.id }}">
-                                                    Confirm Delete
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete "{{ supply.name }}"?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" 
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{% url 'delete_supply' supply.id %}" method="post" 
-                                                      style="display: inline;">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <a href="{% url 'delete_supply' supply.id %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">No supplies found.</td>
+                            <td colspan="7" class="text-center">No supplies found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -142,52 +118,5 @@
             </div>
         </div>
     </div>
-
-    <!-- Pagination -->
-    {% if supplies.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% if supplies.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                    First
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ supplies.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                    Previous
-                </a>
-            </li>
-            {% endif %}
-
-            {% for num in supplies.paginator.page_range %}
-            {% if supplies.number == num %}
-            <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-            </li>
-            {% elif num > supplies.number|add:'-3' and num < supplies.number|add:'3' %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                    {{ num }}
-                </a>
-            </li>
-            {% endif %}
-            {% endfor %}
-
-            {% if supplies.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ supplies.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                    Next
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ supplies.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
-                    Last
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
 </div>
 {% endblock %}

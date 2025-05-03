@@ -19,6 +19,7 @@ def index(request):
     # Get filter parameters
     category_id = request.GET.get('category')
     tag_id = request.GET.get('tag')
+    location_query = request.GET.get('location', '')
     search_query = request.GET.get('search', '')
     
     # Start with all supplies
@@ -29,6 +30,8 @@ def index(request):
         supplies = supplies.filter(category_id=category_id)
     if tag_id:
         supplies = supplies.filter(tags__id=tag_id)
+    if location_query:
+        supplies = supplies.filter(location__icontains=location_query)
     if search_query:
         supplies = supplies.filter(
             models.Q(name__icontains=search_query) |
@@ -53,6 +56,7 @@ def index(request):
         'tags': tags,
         'selected_category': category_id,
         'selected_tag': tag_id,
+        'location_query': location_query,
         'search_query': search_query,
     }
     
