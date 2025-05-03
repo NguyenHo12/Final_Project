@@ -257,6 +257,14 @@ def category_update(request, pk):
         form = CategoryForm(instance=category)
     return render(request, 'inventory/category_form.html', {'form': form, 'title': 'Update Category'})
 
+def category_delete(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Category deleted successfully.')
+        return redirect('category_list')
+    return render(request, 'inventory/category_confirm_delete.html', {'category': category})
+
 def tag_list(request):
     tags = Tag.objects.all()
     return render(request, 'inventory/tag_list.html', {'tags': tags})
@@ -283,3 +291,11 @@ def tag_update(request, pk):
     else:
         form = TagForm(instance=tag)
     return render(request, 'inventory/tag_form.html', {'form': form, 'title': 'Update Tag'})
+
+def tag_delete(request, pk):
+    tag = get_object_or_404(Tag, pk=pk)
+    if request.method == 'POST':
+        tag.delete()
+        messages.success(request, 'Tag deleted successfully.')
+        return redirect('tag_list')
+    return render(request, 'inventory/tag_confirm_delete.html', {'tag': tag})
