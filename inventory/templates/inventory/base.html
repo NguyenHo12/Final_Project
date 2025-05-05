@@ -12,12 +12,13 @@
     {% block extra_css %}{% endblock %}
     <style>
         :root {
-            --primary-color: #01a334;
-            --primary-hover: #018c2c;
-            --primary-light: #e6f4ea;
-            --header-color: #01a334;
-            --text-color: #01a334;
-            --header-bg: #e6f4ea;
+            --primary-color: #5A3A23;   
+            --primary-hover: #5a3a23d8;  
+            --primary-light: #F5E0C3;    
+            --header-color: #5A3A23;      
+            --text-color: #5A3A23;       
+            --header-bg: #F5E0C3;       
+            --accent-color: #D88C46;    
         }
         
         body {
@@ -31,7 +32,7 @@
         }
         
         .navbar-brand {
-            color: white !important;
+            color: var(--primary-light) !important;
             font-weight: bold;
         }
         
@@ -41,20 +42,20 @@
         }
         
         .nav-link {
-            color: white !important;
+            color: var(--primary-light) !important;
             font-weight: 500;
             transition: all 0.3s ease;
         }
         
         .nav-link:hover, .nav-link.active {
-            color: var(--primary-light) !important;
+            color: var(--accent-color) !important;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
         }
         
         .nav-link i {
             margin-right: 8px;
-            color: var(--primary-light);
+            color: var(--accent-color);
         }
         
         .navbar-brand img {
@@ -80,6 +81,7 @@
         .btn-outline-primary:hover {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
+            color: var(--primary-light);
         }
         
         .card {
@@ -90,7 +92,7 @@
         
         .table thead th {
             background-color: var(--primary-light);
-            color: var(--primary-color);
+            color: var(--header-color);
             font-weight: bold;
         }
         
@@ -114,11 +116,11 @@
         .alert-primary {
             background-color: var(--primary-light);
             border-color: var(--primary-color);
-            color: var(--primary-color);
+            color: var(--header-color);
         }
         
         .text-light {
-            color: white !important;
+            color: var(--primary-light) !important;
             font-weight: 500;
         }
 
@@ -134,8 +136,13 @@
             background-color: var(--header-color);
             padding: 0;
         }
-        table a{
-            color: green;
+
+        table a {
+            color: var(--primary-color);
+        }
+
+        table a:hover {
+            color: var(--primary-hover);
         }
     </style>
 </head>
