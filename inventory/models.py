@@ -49,12 +49,15 @@ class Supply(models.Model):
 
 class AuditLog(models.Model):
     ACTION_CHOICES = (
-        ('create', 'Create'),
-        ('update', 'Update'),
-        ('delete', 'Delete'),
+        ('CREATE', 'CREATE'),
+        ('UPDATE', 'UPDATE'),
+        ('DELETE', 'DELETE'),
+        ('IMPORT', 'IMPORT'),
+        ('EXPORT', 'EXPORT'),
     )
     
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    supply = models.ForeignKey(Supply, on_delete=models.SET_NULL, null=True)
+    supply_name = models.CharField(max_length=100, default='Unknown')  # Default value for existing records
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -64,4 +67,9 @@ class AuditLog(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"{self.action} - {self.supply} - {self.timestamp}"
+        return f"{self.action} - {self.supply_name} - {self.timestamp}"
+
+    def save(self, *args, **kwargs):
+        if self.supply and not self.supply_name:
+            self.supply_name = self.supply.name
+        super().save(*args, **kwargs)

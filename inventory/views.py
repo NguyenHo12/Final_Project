@@ -173,43 +173,38 @@ def add_supply(request):
     if request.method == 'POST':
         form = SupplyForm(request.POST)
         if form.is_valid():
-            supply = form.save(commit=False)
-            supply.created_by = request.user
-            supply.save()
-            form.save_m2m()  # Save many-to-many relationships (tags)
-            
-            # Create audit log
+            supply = form.save()
+            # Create an audit log entry for the new supply
             AuditLog.objects.create(
-                user=request.user,
-                action='CREATE',
                 supply=supply,
-                details=f'Created new supply: {supply.name}'
+                supply_name=supply.name,
+                action='CREATE',
+                user=request.user,
+                details=f"Created new supply: {supply.name}"
             )
-            
-            messages.success(request, 'Supply added successfully!')
+            messages.success(request, f'New supply "{supply.name}" has been added.')
             return redirect('index')
     else:
         form = SupplyForm()
-    
     return render(request, 'inventory/add_supply.html', {'form': form})
 
 @login_required
 def delete_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
+    supply_name = supply.name  # Store the name before deletion
     
-    if request.method == 'POST':
-        # Create audit log before deleting
-        AuditLog.objects.create(
-            user=request.user,
-            action='DELETE',
-            supply=supply,
-            details=f'Deleted supply: {supply.name}'
-        )
-        supply.delete()
-        messages.success(request, 'Supply deleted successfully!')
-        return redirect('index')
+    # Create audit log before deleting
+    AuditLog.objects.create(
+        supply=supply,
+        supply_name=supply_name,
+        action='DELETE',
+        user=request.user,
+        details=f"Deleted supply: {supply_name}"
+    )
     
-    return render(request, 'inventory/delete_supply.html', {'supply': supply})
+    supply.delete()
+    messages.success(request, f'Supply "{supply_name}" has been deleted.')
+    return redirect('index')
 
 @login_required
 def edit_supply(request, supply_id):
@@ -237,38 +232,24 @@ def edit_supply(request, supply_id):
 @login_required
 @csrf_exempt 
 def update_supply(request, supply_id):
+    supply = get_object_or_404(Supply, id=supply_id)
     if request.method == 'POST':
-        data = json.loads(request.body)
-        price = data.get('price')
-        quantity = data.get('quantity')
-        location = data.get('location')
-
-        supply = get_object_or_404(Supply, id=supply_id)
-
-        changes = []
-        if price is not None and price != str(supply.price):
-            changes.append(f"Price changed from ${supply.price} to ${price}")
-            supply.price = price
-        if quantity is not None and quantity != str(supply.quantity):
-            changes.append(f"Quantity changed from {supply.quantity} to {quantity}")
-            supply.quantity = quantity 
-        if location is not None and location != supply.location:
-            changes.append(f"Location changed from '{supply.location}' to '{location}'")
-            supply.location = location
-
-        supply.save()
-
-        if changes:
+        form = SupplyForm(request.POST, instance=supply)
+        if form.is_valid():
+            form.save()
+            # Create an audit log entry for the update
             AuditLog.objects.create(
-                action='Update',
-                user=request.user,  
                 supply=supply,
-                details='; '.join(changes)
+                supply_name=supply.name,
+                action='UPDATE',
+                user=request.user,
+                details=f"Updated supply: {supply.name}"
             )
-
-        return JsonResponse({'status': 'success', 'message': 'Supply updated successfully.'})
-
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+            messages.success(request, f'Supply "{supply.name}" has been updated.')
+            return redirect('index')
+    else:
+        form = SupplyForm(instance=supply)
+    return render(request, 'inventory/edit_supply.html', {'form': form, 'supply': supply})
 
 def logout_view(request):
     logout(request)
