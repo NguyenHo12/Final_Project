@@ -1,11 +1,4 @@
-/* ============================================================================
-   Base Styles & Typography
-============================================================================ */
-@font-face {
-    font-family: 'Bauhaus 93';
-    src: url('fonts/Bauhaus 93 Regular.ttf') format('truetype');
-}
-
+/* Base styles */
 body {
     font-family: 'Georgia', serif;
     font-size: 14px;
@@ -13,9 +6,7 @@ body {
     background-color: #f9f9f9;
 }
 
-/* ============================================================================
-   Header Styles
-============================================================================ */
+/* Header */
 .header-container {
     position: fixed;
     top: 0;
@@ -359,9 +350,7 @@ body {
 
 .warn2 { width: 70%; }
 
-/* ============================================================================
-   Table Styles
-============================================================================ */
+/* Table Styles */
 .table-container {
     max-height: 600px;
     width: 90%;
@@ -374,7 +363,6 @@ body {
 }
 
 .table-header {
-    background-color: #4CAF50;
     position: sticky;
     width: 100%;
     top: 0;
@@ -414,7 +402,7 @@ body {
     height: 40px;
 }
 
-/* Table Column Widths */
+/* Column widths */
 .name_head, .name_row { width: 30%; }
 .Price_head, .Price_row { width: 15%; }
 .Quan_head, .Quan_row { width: 15%; }
@@ -422,14 +410,12 @@ body {
 .edit_head, .edit_button { width: 10%; }
 .del_head, .Del_button { width: 10%; }
 
-/* Table Row Styles */
-.data_tab tr {
-    height: 40px;
-}
+/* Row styles */
+.data_tab tr:nth-child(even) { background-color: #f8f9fa; }
+.data_tab tr:nth-child(odd) { background-color: white; }
+.data_tab tr:hover { background-color: #f1f1f1; }
 
-/* ============================================================================
-   Table Header Styles
-============================================================================ */
+/* Header styles */
 .data_tab thead {
     background: linear-gradient(to bottom, #2E7D32, #1B5E20);
     position: sticky;
@@ -511,7 +497,7 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Login message style */
+/* Login message */
 .login-message {
     color: #FFA000;
     font-size: 14px;
@@ -526,9 +512,7 @@ body {
     vertical-align: middle;
 }
 
-/* ============================================================================
-   Filter & Warning Styles
-============================================================================ */
+/* Filter & warning */
 .filter {
     width: 90%;
     margin: 20px auto;
@@ -682,212 +666,6 @@ button:hover {
     .edit-button, .delete-button {
         width: 100%;
     }
-}
-
-/* ============================================================================
-   Table Column Widths
-============================================================================ */
-.name_head, .name_row { width: 30%; }
-.Price_head, .Price_row { width: 15%; }
-.Quan_head, .Quan_row { width: 15%; }
-.loc_head, .loc_row { width: 20%; }
-.edit_head, .edit_button { width: 10%; }
-.del_head, .Del_button { width: 10%; }
-
-/* ============================================================================
-   Table Row Styles
-============================================================================ */
-.data_tab tr:nth-child(even) { background-color: #f8f9fa; }
-.data_tab tr:nth-child(odd) { background-color: white; }
-.data_tab tr:hover { background-color: #f1f1f1; }
-
-/* ============================================================================
-   Table Header Styles
-============================================================================ */
-.data_tab thead {
-    background: linear-gradient(to bottom, #2E7D32, #1B5E20);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.data_tab thead tr {
-    height: 50px;
-}
-
-.data_tab thead th {
-    padding: 15px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #FFFFFF;
-    text-align: center;
-    border-bottom: 2px solid #1B5E20;
-    white-space: nowrap;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    height: 50px;
-    line-height: 1.2;
-    vertical-align: middle;
-    display: table-cell;
-}
-
-/* Column-specific header styles */
-.data_tab thead .name_head {
-    text-align: center;
-    width: 30%;
-    background: linear-gradient(to right, #2E7D32, #1B5E20);
-}
-
-.data_tab thead .Price_head {
-    text-align: center;
-    width: 15%;
-    background: linear-gradient(to right, #2E7D32, #1B5E20);
-}
-
-.data_tab thead .Quan_head {
-    text-align: center;
-    width: 15%;
-    background: linear-gradient(to right, #2E7D32, #1B5E20);
-}
-
-.data_tab thead .loc_head {
-    text-align: center;
-    width: 20%;
-    background: linear-gradient(to right, #2E7D32, #1B5E20);
-}
-
-.data_tab thead .edit_head,
-.data_tab thead .del_head {
-    text-align: center;
-    width: 10%;
-    background: linear-gradient(to right, #2E7D32, #1B5E20);
-    min-width: 120px;
-}
-
-.data_tab thead .del_head button {
-    margin: 0;
-    padding: 6px 12px;
-    font-size: 13px;
-    white-space: nowrap;
-}
-
-/* Hover effect for header */
-.data_tab thead th:hover {
-    background: linear-gradient(to bottom, #1B5E20, #2E7D32);
-    transition: all 0.3s ease;
-}
-
-/* Login message style */
-.login-message {
-    color: #FFA000;
-    font-size: 14px;
-    padding: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* ============================================================================
-   Filter & Warning Styles
-============================================================================ */
-.filter {
-    width: 90%;
-    margin: 20px auto;
-    text-align: center;
-}
-
-.filter input {
-    padding: 10px;
-    margin: 0 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.warning {
-    width: 90%;
-    margin: 10px auto;
-    padding: 8px;
-    background-color: #ffebee;
-    border: 1px solid #ffcdd2;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.warning h1 {
-    font-size: 18px;
-    margin: 0;
-    padding: 0;
-    color: #d32f2f;
-}
-
-.warning .filter-button {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 4px 8px;
-    background-color: #f44336;
-    color: white;
-    text-decoration: none;
-    border-radius: 3px;
-    font-size: 12px;
-}
-
-.warning .filter-button:hover {
-    background-color: #d32f2f;
-}
-
-/* ============================================================================
-   Button Styles
-============================================================================ */
-button {
-    padding: 8px 15px;
-    margin: 5px;
-    border-radius: 4px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-/* ============================================================================
-   Bottom Navigation
-============================================================================ */
-.bottom_nav {
-    width: 90%;
-    margin: 20px auto;
-    text-align: center;
-}
-
-.blank { width: 60%; }
-.export, .import { width: 10%; }
-
-/* ============================================================================
-   Login Notice Styles
-============================================================================ */
-.login-notice {
-    background-color: #FFF3E0;
-    color: #E65100;
-    padding: 10px 15px;
-    text-align: center;
-    border: 1px solid #FFB74D;
-    border-radius: 4px;
-    margin: 10px auto;
-    width: 90%;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* ============================================================================

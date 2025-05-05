@@ -216,7 +216,11 @@
                             <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
                             <td>{{ log.user.username }}</td>
                             <td class="action-cell">
-                                <span class="{% if log.action == 'CREATE' %}bg-success{% elif log.action == 'UPDATE' %}bg-success{% elif log.action == 'DELETE' %}bg-danger{% elif log.action == 'IMPORT' %}bg-info{% elif log.action == 'EXPORT' %}bg-warning{% endif %}">
+                                <span class="{% if log.action == 'CREATE' %}bg-success
+                                            {% elif log.action == 'UPDATE' %}bg-warning
+                                            {% elif log.action == 'DELETE' %}bg-danger
+                                            {% elif log.action == 'IMPORT' %}bg-info
+                                            {% elif log.action == 'EXPORT' %}bg-warning{% endif %}">
                                     {{ log.action|upper }}
                                 </span>
                             </td>
