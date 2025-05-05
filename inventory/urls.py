@@ -25,4 +25,9 @@ urlpatterns = [
     path('tags/create/', views.tag_create, name='tag_create'),
     path('tags/<int:pk>/update/', views.tag_update, name='tag_update'),
     path('tags/<int:pk>/delete/', views.tag_delete, name='tag_delete'),
+
+    path('purchase-orders/', views.purchase_order_list, name='purchase_order_list'),
+    path('purchase-orders/create/', views.create_purchase_order, name='create_purchase_order'),
+    path('purchase-orders/<int:order_id>/', views.purchase_order_detail, name='purchase_order_detail'),
+    path('purchase-orders/<int:order_id>/update-status/', views.update_purchase_order_status, name='update_purchase_order_status'),
 ]

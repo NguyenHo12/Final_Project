@@ -1,0 +1,99 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block title %}Purchase Orders - Pet Supplies Inventory{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Purchase Orders</h2>
+                    <a href="{% url 'create_purchase_order' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> New Order
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Product</th>
+                                    <th>Order Date</th>
+                                    <th>Expected Delivery</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>{{ order.supplier.name }}</td>
+                                    <td>{{ order.order_date|date:"Y-m-d" }}</td>
+                                    <td>{{ order.expected_delivery_date|date:"Y-m-d" }}</td>
+                                    <td>
+                                        {% for item in order.items.all %}
+                                        {{ item.quantity }} units
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if order.status == 'PENDING' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% elif order.status == 'RECEIVED' %}
+                                        <span class="badge bg-success">Received</span>
+                                        {% elif order.status == 'CANCELLED' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'purchase_order_detail' order.id %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if order.status == 'PENDING' %}
+                                            <form method="post" action="{% url 'update_purchase_order_status' order.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="RECEIVED">
+                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Mark this order as received? This will update inventory.')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form method="post" action="{% url 'update_purchase_order_status' order.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="CANCELLED">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No purchase orders found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

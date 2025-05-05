@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Supply, AuditLog, Category, Tag, User  # Make sure to import AuditLog, Category, and Tag
-from .forms import SupplyForm, CategoryForm, TagForm
+from django.db.models import F
+from .models import Supply, AuditLog, Category, Tag, User, PurchaseOrder, Supplier, PurchaseOrderItem
+from .forms import SupplyForm, CategoryForm, TagForm, PurchaseOrderForm, PurchaseOrderItemForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import csv
@@ -11,6 +12,9 @@ from .forms import UploadFileForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal
 
 
 
@@ -324,3 +328,116 @@ def tag_delete(request, pk):
         messages.success(request, 'Tag deleted successfully.')
         return redirect('tag_list')
     return render(request, 'inventory/tag_confirm_delete.html', {'tag': tag})
+
+@login_required
+def purchase_order_list(request):
+    orders = PurchaseOrder.objects.all().order_by('-order_date')
+    return render(request, 'inventory/purchase_order_list.html', {'orders': orders})
+
+@login_required
+def purchase_order_detail(request, order_id):
+    order = get_object_or_404(PurchaseOrder, id=order_id)
+    items = order.items.all()
+    return render(request, 'inventory/purchase_order_detail.html', {
+        'order': order,
+        'items': items
+    })
+
+@login_required
+def create_purchase_order(request):
+    if request.method == 'POST':
+        supply_id = request.POST.get('supply')
+        quantity = request.POST.get('quantity')
+        notes = request.POST.get('notes', '')
+        
+        try:
+            supply = Supply.objects.get(id=supply_id)
+            
+            # Create a supplier with the product name
+            supplier, created = Supplier.objects.get_or_create(
+                name=supply.name,
+                defaults={
+                    'contact_person': 'System',
+                    'email': 'system@example.com',
+                    'phone': 'N/A',
+                    'address': 'N/A',
+                    'notes': f'Auto-created supplier for product {supply.name}',
+                    'is_active': True
+                }
+            )
+            
+            # Create purchase order
+            order = PurchaseOrder.objects.create(
+                supplier=supplier,
+                order_date=timezone.now(),
+                expected_delivery_date=timezone.now() + timedelta(days=7),
+                status='PENDING',
+                notes=notes,
+                created_by=request.user
+            )
+            
+            # Convert quantity to Decimal
+            quantity_decimal = Decimal(str(quantity))
+            unit_price = Decimal(str(supply.price))
+            total_price = quantity_decimal * unit_price
+            
+            # Create order item
+            PurchaseOrderItem.objects.create(
+                purchase_order=order,
+                supply=supply,
+                quantity=quantity_decimal,
+                unit_price=unit_price,
+                total_price=total_price,
+                notes=notes
+            )
+            
+            # Update order total
+            order.total_amount = total_price
+            order.save()
+            
+            messages.success(request, 'Purchase order created successfully.')
+            return redirect('purchase_order_list')
+            
+        except Supply.DoesNotExist:
+            messages.error(request, 'Selected supply does not exist.')
+        except Exception as e:
+            messages.error(request, f'Error creating purchase order: {str(e)}')
+    
+    # Get low stock items
+    low_stock_items = Supply.objects.filter(
+        quantity__lte=models.F('reorder_point')
+    ).select_related('category')
+    
+    return render(request, 'inventory/purchase_order_form.html', {
+        'low_stock_items': low_stock_items
+    })
+
+@login_required
+def update_purchase_order_status(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(PurchaseOrder, id=order_id)
+        new_status = request.POST.get('status')
+        
+        if new_status in ['RECEIVED', 'CANCELLED']:
+            if new_status == 'RECEIVED':
+                # Update inventory for each item
+                for item in order.items.all():
+                    supply = item.supply
+                    supply.quantity += item.quantity
+                    supply.save()
+                    
+                    # Create audit log
+                    AuditLog.objects.create(
+                        supply=supply,
+                        action='RECEIVE',
+                        user=request.user,
+                        details=f'Received {item.quantity} units from purchase order {order.order_number}'
+                    )
+            
+            order.status = new_status
+            order.save()
+            messages.success(request, f'Order status updated to {new_status.lower()}.')
+        else:
+            messages.error(request, 'Invalid status.')
+    
+    return redirect('purchase_order_detail', order_id=order_id)
