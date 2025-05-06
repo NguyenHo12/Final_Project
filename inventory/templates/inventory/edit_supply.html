@@ -3,108 +3,45 @@
 
 {% block title %}Edit Supply - Pet Supplies Inventory{% endblock %}
 
-{% block extra_css %}
-<style>
-        .form-container {
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-        min-height: calc(100vh - 200px);
-        padding: 20px;
-        }
-  
-        .login-form {
-            background-color: #4CAF50; 
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
-            width: 100%; 
-        }
-
-    .login-image {
-        width: 100%;
-        max-width: 385px;
-        height: auto;
-        margin-bottom: 25px;
-        border-radius: 10px;
-    }
-
-    .form-group {
-            margin-bottom: 20px;
-        }
-
-    .form-group label {
-        display: block;
-        color: #F6DE60;
-        margin-bottom: 8px;
-        font-weight: 500;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-
-    button {
-        background-color: #F6DE60;
-        color: #333;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin: 10px;
-        font-weight: 600;
-        transition: background-color 0.3s;
-    }
-
-    button:hover {
-        background-color: #e6ce50;
-    }
-
-    .back-button {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    .back-button:hover {
-        background-color: #5a6268;
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
-<div class="form-container">
-    <div class="login-form">
-    <center>
-            <img src="{% static 'icons/appicon.png' %}" alt="App Logo" class="login-image">
-        </center>
-    <form method="POST">
-        {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                    <small style="color: #F6DE60;">{{ field.help_text }}</small>
-                {% endif %}
-                {% if field.errors %}
-                    <div style="color: #dc3545;">
-                        {{ field.errors }}
-                    </div>
-                {% endif %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header" style="background-color: var(--header-color);">
+                    <h1 class="h4 mb-0 text-white">
+                        <i class="fas fa-edit me-2"></i>Edit Supply
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-warning">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'index' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn" style="background-color: var(--header-color); color: white;">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
-            <center>
-                <button type="submit">Update Supply</button>
-    <a href="{% url 'index' %}">
-                    <button type="button" class="back-button">Back</button>
-        </a>
-</center>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}
