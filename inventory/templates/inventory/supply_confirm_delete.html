@@ -1,7 +1,7 @@
 {% extends 'inventory/base.html' %}
 {% load static %}
 
-{% block title %}Delete Tag - Pet Supplies Inventory{% endblock %}
+{% block title %}Delete Supply - Pet Supplies Inventory{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -12,14 +12,23 @@
             </h4>
         </div>
         <div class="card-body">
-            <p class="lead">Are you sure you want to delete the tag "<strong>{{ tag.name }}</strong>"?</p>
+            <p class="lead">Are you sure you want to delete the supply "<strong>{{ supply.name }}</strong>"?</p>
             <p>This action cannot be undone.</p>
             
             <div class="alert alert-warning">
-                <h5 class="alert-heading">Tag Details:</h5>
+                <h5 class="alert-heading">Supply Details:</h5>
                 <ul class="mb-0">
-                    <li>Name: {{ tag.name }}</li>
-                    <li>Description: {{ tag.description }}</li>
+                    <li>Category: {{ supply.category.name }}</li>
+                    <li>Price: ${{ supply.price }}</li>
+                    <li>Quantity: {{ supply.quantity }}</li>
+                    <li>Location: {{ supply.location }}</li>
+                    {% if supply.tags.all %}
+                    <li>Tags: 
+                        {% for tag in supply.tags.all %}
+                        <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
 
@@ -29,7 +38,7 @@
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash me-2"></i>Delete
                     </button>
-                    <a href="{% url 'tag_list' %}" class="btn btn-secondary">
+                    <a href="{% url 'index' %}" class="btn btn-secondary">
                         <i class="fas fa-times me-2"></i>Cancel
                     </a>
                 </div>

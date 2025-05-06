@@ -176,7 +176,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'low-stock' in request.path %}active{% endif %}" href="{% url 'low_stock_supplies' %}">
+                            <a class="nav-link {% if 'low-stock' in request.path %}active{% endif %}" href="{% url 'low_stock' %}">
                                 <i class="fas fa-exclamation-triangle"></i> Low Stock
                             </a>
                         </li>
@@ -206,6 +206,16 @@
     </div>
 
     <div class="main-container">
+        {% if messages %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message|linebreaksbr }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </div>
 

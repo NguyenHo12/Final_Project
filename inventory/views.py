@@ -199,17 +199,20 @@ def delete_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
     supply_name = supply.name
     
-    AuditLog.objects.create(
-        supply=supply,
-        supply_name=supply_name,
-        action='DELETE',
-        user=request.user,
-        details=f"Deleted supply: {supply_name}"
-    )
+    if request.method == 'POST':
+        AuditLog.objects.create(
+            supply=supply,
+            supply_name=supply_name,
+            action='DELETE',
+            user=request.user,
+            details=f"Deleted supply: {supply_name}"
+        )
+        
+        supply.delete()
+        messages.success(request, f'Supply "{supply_name}" has been deleted.')
+        return redirect('index')
     
-    supply.delete()
-    messages.success(request, f'Supply "{supply_name}" has been deleted.')
-    return redirect('index')
+    return render(request, 'inventory/supply_confirm_delete.html', {'supply': supply})
 
 @login_required
 @user_passes_test(is_editor_or_admin)
@@ -296,10 +299,26 @@ def category_update(request, pk):
 @user_passes_test(is_editor_or_admin)
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
+    
+    # Check if category is used in any supplies
+    linked_supplies = Supply.objects.filter(category=category)
+    if linked_supplies.exists():
+        supply_names = [supply.name for supply in linked_supplies[:5]]  # Get first 5 supplies
+        if len(linked_supplies) > 5:
+            supply_names.append(f"... and {len(linked_supplies) - 5} more")
+        
+        messages.error(request, 
+            f'Cannot delete category "{category.name}" because it is used in the following supplies:\n'
+            f'{", ".join(supply_names)}\n\n'
+            f'Please remove or reassign these supplies to another category before deleting this category.'
+        )
+        return redirect('category_list')
+    
     if request.method == 'POST':
         category.delete()
         messages.success(request, 'Category deleted successfully.')
         return redirect('category_list')
+    
     return render(request, 'inventory/category_confirm_delete.html', {'category': category})
 
 @login_required
@@ -338,10 +357,26 @@ def tag_update(request, pk):
 @user_passes_test(is_editor_or_admin)
 def tag_delete(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
+    
+    # Check if tag is used in any supplies
+    linked_supplies = Supply.objects.filter(tags=tag)
+    if linked_supplies.exists():
+        supply_names = [supply.name for supply in linked_supplies[:5]]  # Get first 5 supplies
+        if len(linked_supplies) > 5:
+            supply_names.append(f"... and {len(linked_supplies) - 5} more")
+        
+        messages.error(request, 
+            f'Cannot delete tag "{tag.name}" because it is used in the following supplies:\n'
+            f'{", ".join(supply_names)}\n\n'
+            f'Please remove this tag from these supplies before deleting it.'
+        )
+        return redirect('tag_list')
+    
     if request.method == 'POST':
         tag.delete()
         messages.success(request, 'Tag deleted successfully.')
         return redirect('tag_list')
+    
     return render(request, 'inventory/tag_confirm_delete.html', {'tag': tag})
 
 @login_required
