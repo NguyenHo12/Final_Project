@@ -1,17 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Supply, AuditLog, Category, Tag, User  # Make sure to import AuditLog, Category, and Tag
+from .models import Supply, AuditLog, Category, Tag, User
 from .forms import SupplyForm, CategoryForm, TagForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 import csv
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from .forms import UploadFileForm
 from django.views.decorators.csrf import csrf_exempt
-import json
 from django.core.paginator import Paginator
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import make_password
 
 # Helper function to check if user is editor or admin
@@ -82,6 +80,11 @@ def custom_login(request):
             messages.error(request, 'Invalid username or password.')
     return render(request, 'inventory/login.html')
 
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+@login_required
 def export_supplies(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="supplies.csv"'
@@ -236,32 +239,6 @@ def edit_supply(request, supply_id):
     else:
         form = SupplyForm(instance=supply)
     return render(request, 'inventory/edit_supply.html', {'form': form, 'supply': supply})
-
-@login_required
-@user_passes_test(is_editor_or_admin)
-@csrf_exempt 
-def update_supply(request, supply_id):
-    supply = get_object_or_404(Supply, id=supply_id)
-    if request.method == 'POST':
-        form = SupplyForm(request.POST, instance=supply)
-        if form.is_valid():
-            form.save()
-            AuditLog.objects.create(
-                supply=supply,
-                supply_name=supply.name,
-                action='UPDATE',
-                user=request.user,
-                details=f"Updated supply: {supply.name}"
-            )
-            messages.success(request, f'Supply "{supply.name}" has been updated.')
-            return redirect('index')
-    else:
-        form = SupplyForm(instance=supply)
-    return render(request, 'inventory/edit_supply.html', {'form': form, 'supply': supply})
-
-def logout_view(request):
-    logout(request)
-    return redirect('index')
 
 @login_required
 def category_list(request):

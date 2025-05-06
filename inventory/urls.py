@@ -2,17 +2,18 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'), 
-    path('login/', views.custom_login, name='login'), 
+    path('', views.index, name='index'),
+    path('login/', views.custom_login, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('low-stock/', views.low_stock_supplies, name='low_stock'), 
-    path('audit-log/', views.audit_log, name='audit_log'),  
-    path('add-supply/', views.add_supply, name='add_supply'),  
-    path('delete-supply/<int:supply_id>/', views.delete_supply, name='delete_supply'),  
-    path('edit-supply/<int:supply_id>/', views.edit_supply, name='edit_supply'),  
-    path('export/', views.export_supplies, name='export_supplies'), 
-    path('import/<int:supply_id>/', views.import_supplies, name='import_supplies'),  
-    path('update_supply/<int:supply_id>/', views.update_supply, name='update_supply'),
+    path('low-stock/', views.low_stock_supplies, name='low_stock'),
+    path('audit-log/', views.audit_log, name='audit_log'),
+    
+    # Supply URLs
+    path('supplies/add/', views.add_supply, name='add_supply'),
+    path('supplies/<int:supply_id>/edit/', views.edit_supply, name='edit_supply'),
+    path('supplies/<int:supply_id>/delete/', views.delete_supply, name='delete_supply'),
+    path('supplies/<int:supply_id>/import/', views.import_supplies, name='import_supplies'),
+    path('supplies/export/', views.export_supplies, name='export_supplies'),
     
     # Category URLs
     path('categories/', views.category_list, name='category_list'),

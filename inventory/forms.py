@@ -2,6 +2,10 @@ from django import forms
 from .models import Supply, Category, Tag
 
 class CategoryForm(forms.ModelForm):
+    """
+    Form for creating and editing categories.
+    Fields: name (required), description (optional)
+    """
     class Meta:
         model = Category
         fields = ['name', 'description']
@@ -11,6 +15,10 @@ class CategoryForm(forms.ModelForm):
         }
 
 class TagForm(forms.ModelForm):
+    """
+    Form for creating and editing tags.
+    Fields: name (required)
+    """
     class Meta:
         model = Tag
         fields = ['name']
@@ -19,6 +27,11 @@ class TagForm(forms.ModelForm):
         }
 
 class SupplyForm(forms.ModelForm):
+    """
+    Form for creating and editing supplies.
+    Fields: name, price, quantity, reorder_point, location, category, tags
+    Includes validation for numeric fields and dynamic loading of categories/tags
+    """
     class Meta:
         model = Supply
         fields = ['name', 'price', 'quantity', 'reorder_point', 'location', 'category', 'tags']
@@ -34,9 +47,13 @@ class SupplyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Load all categories and tags
+        # Load all categories and tags for dropdowns
         self.fields['category'].queryset = Category.objects.all()
         self.fields['tags'].queryset = Tag.objects.all()
 
 class UploadFileForm(forms.Form):
+    """
+    Form for uploading CSV files to import supplies.
+    Fields: file (CSV file)
+    """
     file = forms.FileField(label='Select a CSV file to upload')
