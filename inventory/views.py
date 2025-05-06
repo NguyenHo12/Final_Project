@@ -4,16 +4,19 @@ from django.db import models
 from .models import Supply, AuditLog, Category, Tag, User  # Make sure to import AuditLog, Category, and Tag
 from .forms import SupplyForm, CategoryForm, TagForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 import csv
 from django.http import HttpResponse, JsonResponse
 from .forms import UploadFileForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.paginator import Paginator
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import make_password
 
-
-
+# Helper function to check if user is editor or admin
+def is_editor_or_admin(user):
+    return user.is_staff or user.is_superuser
 
 def index(request):
     # Get filter parameters
@@ -62,6 +65,7 @@ def index(request):
     
     return render(request, 'inventory/index.html', context)
 
+@login_required
 def low_stock_supplies(request):
     low_stock_items = Supply.objects.filter(quantity__lte=models.F('reorder_point'))
     return render(request, 'inventory/low_stock.html', {'low_stock_items': low_stock_items})
@@ -88,6 +92,7 @@ def export_supplies(request):
     return response
 
 @login_required
+@user_passes_test(is_editor_or_admin)
 def import_supplies(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
     
@@ -169,12 +174,12 @@ def audit_log(request):
     return render(request, 'inventory/audit_log.html', context)
 
 @login_required
+@user_passes_test(is_editor_or_admin)
 def add_supply(request):
     if request.method == 'POST':
         form = SupplyForm(request.POST)
         if form.is_valid():
             supply = form.save()
-            # Create an audit log entry for the new supply
             AuditLog.objects.create(
                 supply=supply,
                 supply_name=supply.name,
@@ -189,11 +194,11 @@ def add_supply(request):
     return render(request, 'inventory/add_supply.html', {'form': form})
 
 @login_required
+@user_passes_test(is_editor_or_admin)
 def delete_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
-    supply_name = supply.name  # Store the name before deletion
+    supply_name = supply.name
     
-    # Create audit log before deleting
     AuditLog.objects.create(
         supply=supply,
         supply_name=supply_name,
@@ -207,6 +212,7 @@ def delete_supply(request, supply_id):
     return redirect('index')
 
 @login_required
+@user_passes_test(is_editor_or_admin)
 def edit_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
     if request.method == 'POST':
@@ -216,12 +222,11 @@ def edit_supply(request, supply_id):
             supply = form.save()
             new_data = f'{supply.name}, {supply.price}, {supply.quantity}, {supply.location}'
 
-            # Create an audit log entry for the update
             AuditLog.objects.create(
-                user=request.user,  # User who made the change
-                action='UPDATE',  # Action type
-                supply=supply,  # The supply that was updated
-                details=f'Updated supply: From {old_data} to {new_data}'  # Description of what was changed
+                user=request.user,
+                action='UPDATE',
+                supply=supply,
+                details=f'Updated supply: From {old_data} to {new_data}'
             )
             messages.success(request, 'Supply updated successfully!')
             return redirect('index')
@@ -230,6 +235,7 @@ def edit_supply(request, supply_id):
     return render(request, 'inventory/edit_supply.html', {'form': form, 'supply': supply})
 
 @login_required
+@user_passes_test(is_editor_or_admin)
 @csrf_exempt 
 def update_supply(request, supply_id):
     supply = get_object_or_404(Supply, id=supply_id)
@@ -237,7 +243,6 @@ def update_supply(request, supply_id):
         form = SupplyForm(request.POST, instance=supply)
         if form.is_valid():
             form.save()
-            # Create an audit log entry for the update
             AuditLog.objects.create(
                 supply=supply,
                 supply_name=supply.name,
@@ -255,10 +260,13 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
+@login_required
 def category_list(request):
     categories = Category.objects.all()
     return render(request, 'inventory/category_list.html', {'categories': categories})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def category_create(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -270,6 +278,8 @@ def category_create(request):
         form = CategoryForm()
     return render(request, 'inventory/category_form.html', {'form': form, 'title': 'Create Category'})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def category_update(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -282,6 +292,8 @@ def category_update(request, pk):
         form = CategoryForm(instance=category)
     return render(request, 'inventory/category_form.html', {'form': form, 'title': 'Update Category'})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
@@ -290,10 +302,13 @@ def category_delete(request, pk):
         return redirect('category_list')
     return render(request, 'inventory/category_confirm_delete.html', {'category': category})
 
+@login_required
 def tag_list(request):
     tags = Tag.objects.all()
     return render(request, 'inventory/tag_list.html', {'tags': tags})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def tag_create(request):
     if request.method == 'POST':
         form = TagForm(request.POST)
@@ -305,6 +320,8 @@ def tag_create(request):
         form = TagForm()
     return render(request, 'inventory/tag_form.html', {'form': form, 'title': 'Create Tag'})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def tag_update(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     if request.method == 'POST':
@@ -317,6 +334,8 @@ def tag_update(request, pk):
         form = TagForm(instance=tag)
     return render(request, 'inventory/tag_form.html', {'form': form, 'title': 'Update Tag'})
 
+@login_required
+@user_passes_test(is_editor_or_admin)
 def tag_delete(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     if request.method == 'POST':
@@ -324,3 +343,95 @@ def tag_delete(request, pk):
         messages.success(request, 'Tag deleted successfully.')
         return redirect('tag_list')
     return render(request, 'inventory/tag_confirm_delete.html', {'tag': tag})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_list(request):
+    users = User.objects.all().order_by('username')
+    return render(request, 'inventory/user_list.html', {'users': users})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_create(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        role = request.POST.get('role')
+        is_active = request.POST.get('is_active') == 'on'
+
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('user_create')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists.')
+            return redirect('user_create')
+
+        user = User.objects.create(
+            username=username,
+            email=email,
+            password=make_password(password1),
+            is_active=is_active
+        )
+
+        if role == 'admin':
+            user.is_superuser = True
+            user.is_staff = True
+        elif role == 'editor':
+            user.is_staff = True
+            user.is_superuser = False
+        else:  # viewer
+            user.is_staff = False
+            user.is_superuser = False
+
+        user.save()
+        messages.success(request, 'User created successfully.')
+        return redirect('user_list')
+
+    return render(request, 'inventory/user_form.html')
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_edit(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    
+    if request.method == 'POST':
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        role = request.POST.get('role')
+        is_active = request.POST.get('is_active') == 'on'
+
+        if User.objects.filter(username=user.username).exclude(pk=pk).exists():
+            messages.error(request, 'Username already exists.')
+            return redirect('user_edit', pk=pk)
+
+        if role == 'admin':
+            user.is_superuser = True
+            user.is_staff = True
+        elif role == 'editor':
+            user.is_staff = True
+            user.is_superuser = False
+        else:  # viewer
+            user.is_staff = False
+            user.is_superuser = False
+
+        user.is_active = is_active
+        user.save()
+        messages.success(request, 'User updated successfully.')
+        return redirect('user_list')
+
+    return render(request, 'inventory/user_form.html', {'form': {'instance': user}})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if user.is_superuser:
+        messages.error(request, 'Cannot delete superuser.')
+        return redirect('user_list')
+    
+    user.delete()
+    messages.success(request, 'User deleted successfully.')
+    return redirect('user_list')
