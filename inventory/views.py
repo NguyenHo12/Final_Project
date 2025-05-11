@@ -37,7 +37,7 @@ def index(request):
     if search_query:
         supplies = supplies.filter(
             models.Q(name__icontains=search_query) |
-            models.Q(description__icontains=search_query)
+            models.Q(location__icontains=search_query)
         )
     
     # Order by name
