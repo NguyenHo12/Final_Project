@@ -9,7 +9,7 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-body p-4">
-                    <h2 class="card-title mb-4">Import Supplies for {{ supply.name }}</h2>
+                    <h2 class="card-title mb-4">Import Supplies {{ supply.name }}</h2>
 
                     {% if messages %}
                         {% for message in messages %}
@@ -20,11 +20,7 @@
                         {% endfor %}
                     {% endif %}
 
-                    <div class="alert alert-info">
-                        <h5 class="alert-heading">Current Stock Information</h5>
-                        <p>Current Quantity: {{ supply.quantity }}</p>
-                        <p>Low Stock Threshold: {{ supply.low_stock_threshold }}</p>
-                    </div>
+                    
 
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
@@ -32,10 +28,8 @@
                         <div class="mb-3">
                             <label for="file" class="form-label">CSV File</label>
                             <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
-                            <div class="form-text">
-                                Upload a CSV file with the following format:<br>
-                                - First column: Supply ID (optional)<br>
-                                - Second column: Quantity to import
+                            <div class="form-text"></div>
+                                <a href="{% url 'download_import_template' %}" class="btn btn-link p-0 mt-2"><i class="fas fa-download me-1"></i>Download Template</a>
                             </div>
                             <div class="invalid-feedback">
                                 Please select a CSV file.

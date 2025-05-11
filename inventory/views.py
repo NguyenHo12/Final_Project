@@ -6,11 +6,12 @@ from .forms import SupplyForm, CategoryForm, TagForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from .forms import UploadFileForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
 
 # Helper function to check if user is editor or admin
 def is_editor_or_admin(user):
@@ -134,6 +135,79 @@ def import_supplies(request, supply_id):
     return render(request, 'inventory/import_supplies.html', {
         'form': form,
         'supply': supply
+    })
+
+@login_required
+@user_passes_test(is_editor_or_admin)
+def import_all_supplies(request):
+    """
+    Bulk import supplies from a CSV file.
+    CSV format: Name, Category, Tags, Price, Quantity, Reorder Point, Location
+    """
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                file = request.FILES['file']
+                if file.name.endswith('.csv'):
+                    # Open the file in text mode
+                    csv_file = file.read().decode('utf-8').splitlines()
+                    reader = csv.reader(csv_file)
+                    next(reader)  # Skip header
+                    imported_count = 0
+                    for row in reader:
+                        if len(row) >= 7:
+                            name = row[0]
+                            category_name = row[1]
+                            tag_names = row[2].split()
+                            price = float(row[3].replace('$', ''))
+                            quantity = int(row[4])
+                            reorder_point = int(row[5])
+                            location = row[6]
+                            
+                            # Get or create category
+                            category, _ = Category.objects.get_or_create(name=category_name)
+                            
+                            # Get or create tags
+                            tags = []
+                            for tag_name in tag_names:
+                                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                                tags.append(tag)
+                            
+                            # Get or create supply
+                            supply, created = Supply.objects.get_or_create(
+                                name=name,
+                                defaults={
+                                    'category': category,
+                                    'price': price,
+                                    'quantity': quantity,
+                                    'reorder_point': reorder_point,
+                                    'location': location
+                                }
+                            )
+                            
+                            if not created:
+                                supply.category = category
+                                supply.price = price
+                                supply.quantity = quantity
+                                supply.reorder_point = reorder_point
+                                supply.location = location
+                                supply.save()
+                            
+                            supply.tags.set(tags)
+                            imported_count += 1
+                    
+                    messages.success(request, f'Successfully imported {imported_count} supplies.')
+                    return redirect('index')
+                else:
+                    messages.error(request, 'Please upload a CSV file')
+            except Exception as e:
+                messages.error(request, f'Error importing supplies: {str(e)}')
+    else:
+        form = UploadFileForm()
+    return render(request, 'inventory/import_supplies.html', {
+        'form': form,
+        'is_bulk_import': True
     })
 
 @login_required
@@ -447,3 +521,13 @@ def user_delete(request, pk):
     user.delete()
     messages.success(request, 'User deleted successfully.')
     return redirect('user_list')
+
+@login_required
+@user_passes_test(is_editor_or_admin)
+def download_import_template(request):
+    """
+    Serve the sample CSV template for bulk import.
+    """
+    import os
+    template_path = os.path.join(settings.BASE_DIR, 'sample_import_supplies.csv')
+    return FileResponse(open(template_path, 'rb'), as_attachment=True, filename='sample_import_supplies.csv')

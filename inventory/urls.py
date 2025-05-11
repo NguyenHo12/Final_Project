@@ -14,6 +14,8 @@ urlpatterns = [
     path('supplies/<int:supply_id>/delete/', views.delete_supply, name='delete_supply'),
     path('supplies/<int:supply_id>/import/', views.import_supplies, name='import_supplies'),
     path('supplies/export/', views.export_supplies, name='export_supplies'),
+    path('supplies/import/', views.import_all_supplies, name='import_all_supplies'),
+    path('supplies/import/template/', views.download_import_template, name='download_import_template'),
     
     # Category URLs
     path('categories/', views.category_list, name='category_list'),
